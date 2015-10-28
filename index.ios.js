@@ -13,6 +13,30 @@ var {
 } = React;
 
 var dangerzone = React.createClass({
+  watchID: (null: ?number),
+
+  getInitialState: function() {
+    return {
+      initialPosition: 'unknown',
+      lastPosition: 'unknown',
+    };
+  },
+
+  componentDidMount: function() {
+    navigator.geolocation.getCurrentPosition(
+      (initialPosition) => this.setState({initialPosition}),
+      (error) => alert(error.message),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+    );
+    this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
+      this.setState({lastPosition});
+    });
+  },
+
+  componentWillUnmount: function() {
+    navigator.geolocation.clearWatch(this.watchID);
+  },
+
   render: function() {
     return (
       <View style={styles.container}>
@@ -25,10 +49,19 @@ var dangerzone = React.createClass({
         <Text style={styles.instructions}>
           =)
         </Text>
+        <Text>
+          <Text style={styles.title}>Initial position: </Text>
+          {JSON.stringify(this.state.initialPosition)}
+        </Text>
+        <Text>
+          <Text style={styles.title}>Current position: </Text>
+          {JSON.stringify(this.state.lastPosition)}
+        </Text>
       </View>
     );
   }
 });
+
 
 var styles = StyleSheet.create({
   container: {
@@ -46,6 +79,9 @@ var styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+  geolocation: {
+    fontWeight: '500',
   },
 });
 
