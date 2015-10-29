@@ -7,6 +7,7 @@
 import React from 'react-native';
 import coordDistance from './js/util/coordDistance';
 import isInZone from './js/util/isInZone';
+import each from 'lodash/collection/each';
 
 var {
   AppRegistry,
@@ -80,6 +81,12 @@ var dangerzone = React.createClass({
       mapRegionInput: null,
       annotations: null,
       isFirstLoad: true,
+
+      location: {},
+      nearbyZoneMap: {},
+      enteredZones: [],
+      exitedZones: [],
+      isInDanger: false
     };
   },
 
@@ -96,37 +103,68 @@ var dangerzone = React.createClass({
     navigator.geolocation.clearWatch(this.watchID);
   },
 
-  componentWillReceiveProps: function () {
-    const nearbyDangerZones = this._getNearbyDangerZones();
-    const currentZoneAlerts = this.state.currentZoneAlerts;
-    nearbyDangerZones.forEach(zone => {
-      const knownZone = currentZoneAlerts.hasOwnProperty(zone.coordId);
-      if (!knownZone) {
-
-      }
-    });
+  componentDidUpdate: function () {
+    if (this.state.enteredZones.length > 0) {
+      const enteredPlural = this.state.enteredZones.length !== 1;
+      let msg = `You entered ${enteredPlural ? 'dangerous zones' : 'a dangerous zone'}:`;
+      msg += this.state.enteredZones.map(zone => `\n - ${zone.title}`);
+      this._showAlert(msg);
+    }
   },
 
   _updatePosition: function (position) {
-    const location = position.coords;
-    const nearbyZones = dangerzoneCoords
-      .filter(zone => isInZone(location, zone))
-      .map(zone => ({
-        title: zone.title,
-        coordId: `${zone.lat},${zone.lon}`,
-        distance: coordDistance(location, zone)
-      }));
+    const location = position.coords || this.state.location;
+    const nearbyZoneMap = {};
+    let isInDanger = false;
 
-    this.setState({ location });
+    // Get the current list of nearby zones
+    dangerzoneCoords
+      .filter(zone => isInZone(location, zone))
+      .forEach(zone => {
+        isInDanger = true;
+        const zoneId = `${zone.lat},${zone.lon}`;
+        nearbyZoneMap[zoneId] = {
+          title: zone.title,
+          zoneId,
+          distance: coordDistance(location, zone)
+        };
+      });
+
+    const previousNearbyZones = this.state.nearbyZoneMap || {};
+    const exitedZones = [];
+    const enteredZones = [];
+
+    // Which zones have we exited?
+    each(previousNearbyZones, (zone, zoneId) => {
+      if (!nearbyZoneMap.hasOwnProperty(zoneId)) {
+        exitedZones.push(zone);
+      }
+    });
+
+    // Which zones are we now in?
+    each(nearbyZoneMap, (zone, zoneId) => {
+      if (!previousNearbyZones.hasOwnProperty(zoneId)) {
+        enteredZones.push(zone);
+      }
+    });
+
+    // Update the state
+    this.setState({
+      location,
+      nearbyZoneMap,
+      enteredZones,
+      exitedZones,
+      isInDanger
+    });
   },
 
-  _showAlert: function() {
+  _showAlert: function(message) {
     AlertIOS.alert(
       'Notification Received',
-      'Alert message: yo',
+      message,
       [{
         text: 'Dismiss',
-        onPress: null,
+        onPress: null
       }]
     );
   },
@@ -135,14 +173,10 @@ var dangerzone = React.createClass({
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Dangerzone
+          Dangerzone: {this.state.isInDanger ? 'Danger!' : ''}
         </Text>
 
         <CurrentCoordinates coords={this.state.location}/>
-
-        <Text>
-          {/*JSON.stringify(nearbyZones, ' ', 2)*/}
-        </Text>
 
         <View style={styles.row}>
           <MapView style={styles.map} showsUserLocation={true} annotations={dangerzoneCoords} />
@@ -159,7 +193,7 @@ var dangerzone = React.createClass({
     return [{
       longitude: region.longitude,
       latitude: region.latitude,
-      title: 'You Are Here',
+      title: 'You Are Here'
     }];
   },
 
@@ -183,7 +217,7 @@ var dangerzone = React.createClass({
     this.setState({
       mapRegion: region,
       mapRegionInput: region,
-      annotations: this._getAnnotations(region),
+      annotations: this._getAnnotations(region)
     });
   }
 });
