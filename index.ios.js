@@ -17,138 +17,6 @@ var {
 
 
 
-
-
-var regionText = {
-  latitude: '0',
-  longitude: '0',
-  latitudeDelta: '0',
-  longitudeDelta: '0',
-};
-
-var MapRegionInput = React.createClass({
-
-  propTypes: {
-    region: React.PropTypes.shape({
-      latitude: React.PropTypes.number.isRequired,
-      longitude: React.PropTypes.number.isRequired,
-      latitudeDelta: React.PropTypes.number.isRequired,
-      longitudeDelta: React.PropTypes.number.isRequired,
-    }),
-    onChange: React.PropTypes.func.isRequired,
-  },
-
-  getInitialState: function() {
-    return {
-      region: {
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0,
-        longitudeDelta: 0,
-      }
-    };
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      region: nextProps.region || this.getInitialState().region
-    });
-  },
-
-  render: function() {
-    var region = this.state.region || this.getInitialState().region;
-    return (
-      <View>
-        <View style={styles.row}>
-          <Text>
-            {'Latitude'}
-          </Text>
-          <TextInput
-            value={'' + region.latitude}
-            style={styles.textInput}
-            onChange={this._onChangeLatitude}
-            selectTextOnFocus={true}
-          />
-        </View>
-        <View style={styles.row}>
-          <Text>
-            {'Longitude'}
-          </Text>
-          <TextInput
-            value={'' + region.longitude}
-            style={styles.textInput}
-            onChange={this._onChangeLongitude}
-            selectTextOnFocus={true}
-          />
-        </View>
-        <View style={styles.row}>
-          <Text>
-            {'Latitude delta'}
-          </Text>
-          <TextInput
-            value={'' + region.latitudeDelta}
-            style={styles.textInput}
-            onChange={this._onChangeLatitudeDelta}
-            selectTextOnFocus={true}
-          />
-        </View>
-        <View style={styles.row}>
-          <Text>
-            {'Longitude delta'}
-          </Text>
-          <TextInput
-            value={'' + region.longitudeDelta}
-            style={styles.textInput}
-            onChange={this._onChangeLongitudeDelta}
-            selectTextOnFocus={true}
-          />
-        </View>
-        <View style={styles.changeButton}>
-          <Text onPress={this._change}>
-            {'Change'}
-          </Text>
-        </View>
-      </View>
-    );
-  },
-
-  _onChangeLatitude: function(e) {
-    regionText.latitude = e.nativeEvent.text;
-  },
-
-  _onChangeLongitude: function(e) {
-    regionText.longitude = e.nativeEvent.text;
-  },
-
-  _onChangeLatitudeDelta: function(e) {
-    regionText.latitudeDelta = e.nativeEvent.text;
-  },
-
-  _onChangeLongitudeDelta: function(e) {
-    regionText.longitudeDelta = e.nativeEvent.text;
-  },
-
-  _change: function() {
-    this.setState({
-      latitude: parseFloat(regionText.latitude),
-      longitude: parseFloat(regionText.longitude),
-      latitudeDelta: parseFloat(regionText.latitudeDelta),
-      longitudeDelta: parseFloat(regionText.longitudeDelta),
-    });
-    this.props.onChange(this.state.region);
-  },
-
-});
-
-
-
-
-
-
-
-
-
-
 var CurrentCoordinates = React.createClass({
   render: function() {
     var longitude;
@@ -229,6 +97,19 @@ var dangerzone = React.createClass({
       latitude = this.state.lastPosition.coords.latitude;
     }
 
+    var dangerzoneCoords = [
+      {
+        latitude: -33.8634,
+        longitude: 151.210,
+        title: 'dangerous place',
+      },
+      {
+        latitude: -33.8630,
+        longitude: 151.212,
+        title: 'another dangerous place',
+      }
+    ];
+
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
@@ -248,8 +129,10 @@ var dangerzone = React.createClass({
           <Text style={styles.title}>Current position: </Text>
         </Text>
           <CurrentCoordinates coords={this.state.lastPosition.coords} />
+        <View style={styles.row}>
 
-        <MapView style={styles.map} showsUserLocation={true} />
+          <MapView style={styles.map} showsUserLocation={true} annotations={dangerzoneCoords} />
+        </View>
       </View>
     );
   },
@@ -314,7 +197,7 @@ var styles = StyleSheet.create({
 
   map: {
     height: 150,
-    width: 100,
+    width: 300,
     margin: 100,
     borderWidth: 1,
     borderColor: '#000000',
