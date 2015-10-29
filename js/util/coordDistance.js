@@ -1,6 +1,6 @@
 import normaliseCoord from './normaliseCoord';
 
-const RADIUS_EARTH = 6.371e3; // In kilometers
+const RADIUS_EARTH = 6.371e6; // In meters
 
 /**
  * Convert degrees to radians

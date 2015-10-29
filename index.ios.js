@@ -22,16 +22,15 @@ var CurrentCoordinates = React.createClass({
     var longitude;
     var latitude;
 
-    if(this.props.coords) {
+    if (this.props.coords) {
       longitude = this.props.coords.longitude;
       latitude = this.props.coords.latitude;
     }
 
     return (
         <Text>
-          <Text>My coordinates</Text>
-          <Text>longitude: {longitude}</Text>
-          <Text>latitude: {latitude}</Text>
+          Current position:
+          {longitude}, {latitude}
         </Text>
     );
   }
@@ -111,28 +110,12 @@ var dangerzone = React.createClass({
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Welcome to the Dangerzone
+          Dangerzone
         </Text>
-        <Text style={styles.instructions}>
-          Lets get dangerous
-        </Text>
-        <Text style={styles.instructions}>
-          =)
-        </Text>
-        <Text>
-          <Text style={styles.title}>Initial position: </Text>
-          {JSON.stringify(this.state.initialPosition)}
-        </Text>
-        <Text>
-          <Text style={styles.title}>Distance from dangerzone[0]:</Text>
-          {Math.round(coordDistance({ longitude, latitude }, dangerzoneCoords[0]) * 1e3) + ' (m)'}
-        </Text>
-        <Text>
-          <Text style={styles.title}>Current position: </Text>
-        </Text>
-          <CurrentCoordinates coords={this.state.lastPosition.coords} />
-        <View style={styles.row}>
 
+        <CurrentCoordinates coords={this.state.lastPosition.coords}/>
+
+        <View style={styles.row}>
           <MapView style={styles.map} showsUserLocation={true} annotations={dangerzoneCoords} />
         </View>
       </View>
