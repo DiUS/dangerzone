@@ -159,14 +159,14 @@ var dangerzone = React.createClass({
   },
 
   _showAlert: function(message) {
-    AlertIOS.alert(
-      'Notification Received',
-      message,
-      [{
-        text: 'Dismiss',
-        onPress: null
-      }]
-    );
+    // AlertIOS.alert(
+    //   'Notification Received',
+    //   message,
+    //   [{
+    //     text: 'Dismiss',
+    //     onPress: null
+    //   }]
+    // );
   },
 
   render: function() {
@@ -175,15 +175,13 @@ var dangerzone = React.createClass({
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Dangerzone: {this.state.isInDanger ? 'Danger!' : ''}
+          Dangerzone: {this.state.isInDanger ? 'You are in Danger!' : ''}
         </Text>
 
         <CurrentCoordinates coords={this.state.location}/>
 
         <View style = {dangerStyle}>
-          <View style={styles.row}>
             <MapView style={styles.map} showsUserLocation={true} annotations={dangerzoneCoords} />
-          </View>
         </View>
         
       </View>
@@ -246,8 +244,8 @@ var styles = StyleSheet.create({
   },
 
   map: {
-    height: 150,
-    width: 300,
+    height: 480,
+    width: 350,
     margin: 100,
     borderWidth: 1,
     borderColor: '#000000',
