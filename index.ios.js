@@ -15,6 +15,8 @@ var {
   TextInput,
   View,
   MapView,
+  TouchableHighlight,
+  AlertIOS,
 } = React;
 
 var CurrentCoordinates = React.createClass({
@@ -37,22 +39,17 @@ var CurrentCoordinates = React.createClass({
   }
 });
 
-var Map = React.createClass({
+var Button = React.createClass({
   render: function() {
-    var longitude;
-    var latitude;
-
-    if(this.props.coords) {
-      longitude = this.props.coords.longitude;
-      latitude = this.props.coords.latitude;
-    }
-
     return (
-        <Text>
-          <Text>My coordinates</Text>
-          <Text>longitude: {longitude}</Text>
-          <Text>latitude: {latitude}</Text>
+      <TouchableHighlight
+        underlayColor={'white'}
+        style={styles.button}
+        onPress={this.props.onPress}>
+        <Text style={styles.buttonLabel}>
+          {this.props.label}
         </Text>
+      </TouchableHighlight>
     );
   }
 });
@@ -84,6 +81,17 @@ var dangerzone = React.createClass({
 
   componentWillUnmount: function() {
     navigator.geolocation.clearWatch(this.watchID);
+  },
+
+  _showAlert: function() {
+    AlertIOS.alert(
+      'Notification Received',
+      'Alert message: yo',
+      [{
+        text: 'Dismiss',
+        onPress: null,
+      }]
+    );
   },
 
   render: function() {
@@ -135,6 +143,10 @@ var dangerzone = React.createClass({
 
           <MapView style={styles.map} showsUserLocation={true} annotations={dangerzoneCoords} />
         </View>
+        <Button
+          onPress={this._showAlert.bind(this)}
+          label="Send fake notification"
+        />
       </View>
     );
   },
@@ -219,7 +231,16 @@ var styles = StyleSheet.create({
     padding: 3,
     borderWidth: 0.5,
     borderColor: '#777777'
-  }
+  },
+
+  button: {
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonLabel: {
+    color: 'blue',
+  },
 });
 
 AppRegistry.registerComponent('dangerzone', () => dangerzone);
