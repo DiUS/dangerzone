@@ -181,10 +181,6 @@ var dangerzone = React.createClass({
         <View style={styles.row}>
           <MapView style={styles.map} showsUserLocation={true} annotations={dangerzoneCoords} />
         </View>
-        <Button
-          onPress={this._showAlert.bind(this)}
-          label="Send fake notification"
-        />
       </View>
     );
   },
