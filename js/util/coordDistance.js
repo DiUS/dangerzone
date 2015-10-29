@@ -16,6 +16,7 @@ function deg2rad(deg) {
  *
  * E.g.
  *  coordDistance({ lat: -33.8, lon: 151.2 }, { lat: 34.1, lon: -118.8 });
+ *  coordDistance({ latitude: -33.8, longitude: 151.2 }, { latitude: 34.1, longitude: -118.8 });
  *  coordDistance([-33.8, 151.2], [34.1, -118.8]);
  */
 export default function (a, b) {
