@@ -8,6 +8,7 @@ import React from 'react-native';
 import coordDistance from './js/util/coordDistance';
 import isInZone from './js/util/isInZone';
 import each from 'lodash/collection/each';
+import merge from 'lodash/object/merge';
 
 var {
   AppRegistry,
@@ -18,6 +19,7 @@ var {
   MapView,
   TouchableHighlight,
   AlertIOS,
+  VibrationIOS,
 } = React;
 
 
@@ -47,7 +49,7 @@ var CurrentCoordinates = React.createClass({
     }
 
     return (
-        <Text>
+        <Text style={styles.welcomePosition}>
           Current position:
           {longitude}, {latitude}
         </Text>
@@ -159,6 +161,7 @@ var dangerzone = React.createClass({
   },
 
   _showAlert: function(message) {
+    VibrationIOS.vibrate();
     // AlertIOS.alert(
     //   'Notification Received',
     //   message,
@@ -172,8 +175,10 @@ var dangerzone = React.createClass({
   render: function() {
     var dangerStyle;
     dangerStyle = this.state.isInDanger ? styles.danger : styles.safe;
+    var containerStyle;
+    containerStyle = this.state.isInDanger ? styles.dangercontainer : styles.safecontainer;
     return (
-      <View style={styles.container}>
+      <View style={containerStyle}>
         <Text style={styles.welcome}>
           Dangerzone: {this.state.isInDanger ? 'You are in Danger!' : ''}
         </Text>
@@ -223,16 +228,35 @@ var dangerzone = React.createClass({
 
 
 var styles = StyleSheet.create({
-  container: {
+  dangercontainer: {
+    paddingTop: 60,
+    paddingBottom: 40,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#FF0000',
+  },
+  safecontainer: {
+    paddingTop: 60,
+    paddingBottom: 40,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#1F366C',
   },
   welcome: {
+    paddingTop: 60,
+    paddingBottom: 40,
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+    color: 'white',
+  },
+  welcomePosition: {
+    fontSize: 14,
+    textAlign: 'center',
+    margin: 10,
+    color: 'white',
   },
   instructions: {
     textAlign: 'center',
@@ -282,7 +306,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'red'
   },
   safe: {
-    backgroundColor: 'blue'
+    backgroundColor: '#1F366C'
   }
 });
 
