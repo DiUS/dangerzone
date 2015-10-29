@@ -7,6 +7,8 @@
 import React from 'react-native';
 import coordDistance from './js/util/coordDistance';
 
+var bgGeo = 'js/util/geolocation';
+
 var {
   AppRegistry,
   StyleSheet,
@@ -16,7 +18,18 @@ var {
   MapView,
 } = React;
 
-
+var dangerzoneCoords = [
+  {
+    latitude: -33.8634,
+    longitude: 151.210,
+    title: 'dangerous place',
+  },
+  {
+    latitude: -33.8630,
+    longitude: 151.212,
+    title: 'another dangerous place',
+  }
+];
 
 
 var CurrentCoordinates = React.createClass({
@@ -84,10 +97,26 @@ var dangerzone = React.createClass({
     this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
       this.setState({lastPosition});
     });
+
+    dangerzoneCoords.forEach(function(dangerZoneCoord) {
+        bgGeo.addGeofence({
+            identifier: dangerZoneCoord.title,
+            radius: 150,
+            latitude: dangerZoneCoord.latitude,
+            longitude: dangerZoneCoord.longitude,
+            notifyOnEntry: true,
+            notifyOnExit: true
+        });
+    });
   },
+
 
   componentWillUnmount: function() {
     navigator.geolocation.clearWatch(this.watchID);
+
+
+    // Call #stop to halt all tracking
+    bgGeo.stop();
   },
 
   render: function() {
@@ -98,19 +127,6 @@ var dangerzone = React.createClass({
       longitude = this.state.lastPosition.coords.longitude;
       latitude = this.state.lastPosition.coords.latitude;
     }
-
-    var dangerzoneCoords = [
-      {
-        latitude: -33.8634,
-        longitude: 151.210,
-        title: 'dangerous place',
-      },
-      {
-        latitude: -33.8630,
-        longitude: 151.212,
-        title: 'another dangerous place',
-      }
-    ];
 
     return (
       <View style={styles.container}>
@@ -198,9 +214,6 @@ var styles = StyleSheet.create({
     fontWeight: '500',
   },
 
-
-
-
   map: {
     height: 150,
     width: 300,
@@ -232,4 +245,3 @@ var styles = StyleSheet.create({
 AppRegistry.registerComponent('dangerzone', () => dangerzone);
 
 /// - Utility ------------------------------------------------------------------
-
