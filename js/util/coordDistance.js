@@ -1,3 +1,5 @@
+import normaliseCoord from './normaliseCoord';
+
 const RADIUS_EARTH = 6.371e3; // In kilometers
 
 /**
@@ -20,10 +22,12 @@ function deg2rad(deg) {
  *  coordDistance([-33.8, 151.2], [34.1, -118.8]);
  */
 export default function (a, b) {
-  let latA = deg2rad(a.lat || a.latitude  || a[0]);
-  let lonA = deg2rad(a.lon || a.longitude || a[1]);
-  let latB = deg2rad(b.lat || b.latitude  || b[0]);
-  let lonB = deg2rad(b.lon || b.longitude || a[1]);
+  a = normaliseCoord(a);
+  b = normaliseCoord(b);
+  let latA = deg2rad(a.lat);
+  let lonA = deg2rad(a.lon);
+  let latB = deg2rad(b.lat);
+  let lonB = deg2rad(b.lon);
 
   let dlat = Math.abs(latA - latB);
   let dlon = Math.abs(lonA - lonB);

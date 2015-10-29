@@ -6,6 +6,7 @@
 
 import React from 'react-native';
 import coordDistance from './js/util/coordDistance';
+import isInZone from './js/util/isInZone';
 
 var {
   AppRegistry,
