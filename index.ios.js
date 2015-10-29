@@ -12,6 +12,27 @@ var {
   View,
 } = React;
 
+
+var CurrentCoordinates = React.createClass({
+  render: function() {
+    var longitude;
+    var latitude;
+
+    if(this.props.coords) {
+      longitude = this.props.coords.longitude;
+      latitude = this.props.coords.latitude;
+    }
+
+    return (
+        <Text>
+          <Text>My coordinates</Text>
+          <Text>longitude: {longitude}</Text>
+          <Text>latitude: {latitude}</Text>
+        </Text>
+    );
+  }
+})
+
 var dangerzone = React.createClass({
   watchID: (null: ?number),
 
@@ -38,6 +59,14 @@ var dangerzone = React.createClass({
   },
 
   render: function() {
+    var longitude;
+    var latitude;
+
+    if(this.state.lastPosition.coords) {
+      longitude = this.state.lastPosition.coords.longitude;
+      latitude = this.state.lastPosition.coords.latitude;
+    }
+
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
@@ -55,7 +84,7 @@ var dangerzone = React.createClass({
         </Text>
         <Text>
           <Text style={styles.title}>Current position: </Text>
-          {JSON.stringify(this.state.lastPosition)}
+          <CurrentCoordinates coords={this.state.lastPosition.coords} />
         </Text>
       </View>
     );
