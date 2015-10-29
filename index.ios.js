@@ -88,10 +88,12 @@ var dangerzone = React.createClass({
   render: function() {
     var longitude;
     var latitude;
+    var location = {};
 
     if(this.state.lastPosition.coords) {
       longitude = this.state.lastPosition.coords.longitude;
       latitude = this.state.lastPosition.coords.latitude;
+      location = { latitude, longitude };
     }
 
     var dangerzoneCoords = [
@@ -99,13 +101,22 @@ var dangerzone = React.createClass({
         latitude: -33.8634,
         longitude: 151.210,
         title: 'dangerous place',
+        radius: 100
       },
       {
         latitude: -33.8630,
         longitude: 151.212,
         title: 'another dangerous place',
+        radius: 100
       }
     ];
+
+    var nearbyZones = dangerzoneCoords.map(zone => ({
+      title: zone.title,
+      isInZone: isInZone(location, zone)
+    }));
+
+    var isInDanger = nearbyZones.filter(zone => zone.isInZone).length > 0;
 
     return (
       <View style={styles.container}>
@@ -114,6 +125,11 @@ var dangerzone = React.createClass({
         </Text>
 
         <CurrentCoordinates coords={this.state.lastPosition.coords}/>
+
+        <Text>
+          {isInDanger ? 'Danger Will Robinson!\n' : ''}
+          {JSON.stringify(nearbyZones, ' ', 2)}
+        </Text>
 
         <View style={styles.row}>
           <MapView style={styles.map} showsUserLocation={true} annotations={dangerzoneCoords} />
