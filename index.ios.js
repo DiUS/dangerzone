@@ -16,9 +16,6 @@ var {
   MapView,
 } = React;
 
-
-
-
 var CurrentCoordinates = React.createClass({
   render: function() {
     var longitude;
@@ -37,7 +34,7 @@ var CurrentCoordinates = React.createClass({
         </Text>
     );
   }
-})
+});
 
 var Map = React.createClass({
   render: function() {
@@ -57,11 +54,9 @@ var Map = React.createClass({
         </Text>
     );
   }
-})
+});
 
 var dangerzone = React.createClass({
-  watchID: (null: ?number),
-
   getInitialState: function() {
     return {
       initialPosition: 'unknown',
@@ -173,7 +168,7 @@ var dangerzone = React.createClass({
       mapRegionInput: region,
       annotations: this._getAnnotations(region),
     });
-  },
+  }
 });
 
 
@@ -192,14 +187,11 @@ var styles = StyleSheet.create({
   instructions: {
     textAlign: 'center',
     color: '#333333',
-    marginBottom: 5,
+    marginBottom: 5
   },
   geolocation: {
-    fontWeight: '500',
+    fontWeight: '500'
   },
-
-
-
 
   map: {
     height: 150,
@@ -225,11 +217,8 @@ var styles = StyleSheet.create({
     marginTop: 5,
     padding: 3,
     borderWidth: 0.5,
-    borderColor: '#777777',
-  },
+    borderColor: '#777777'
+  }
 });
 
 AppRegistry.registerComponent('dangerzone', () => dangerzone);
-
-/// - Utility ------------------------------------------------------------------
-
