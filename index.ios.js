@@ -19,6 +19,22 @@ var {
   AlertIOS,
 } = React;
 
+
+const dangerzoneCoords = [
+  {
+    latitude: -33.8634,
+    longitude: 151.210,
+    title: 'dangerous place',
+    radius: 100
+  },
+  {
+    latitude: -33.8630,
+    longitude: 151.212,
+    title: 'another dangerous place',
+    radius: 100
+  }
+];
+
 var CurrentCoordinates = React.createClass({
   render: function() {
     var longitude;
@@ -73,13 +89,35 @@ var dangerzone = React.createClass({
       (error) => alert(error.message),
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
-    this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
-      this.setState({lastPosition});
-    });
+    this.watchID = navigator.geolocation.watchPosition(newPosition => this._updatePosition(newPosition));
   },
 
   componentWillUnmount: function() {
     navigator.geolocation.clearWatch(this.watchID);
+  },
+
+  componentWillReceiveProps: function () {
+    const nearbyDangerZones = this._getNearbyDangerZones();
+    const currentZoneAlerts = this.state.currentZoneAlerts;
+    nearbyDangerZones.forEach(zone => {
+      const knownZone = currentZoneAlerts.hasOwnProperty(zone.coordId);
+      if (!knownZone) {
+
+      }
+    });
+  },
+
+  _updatePosition: function (position) {
+    const location = position.coords;
+    const nearbyZones = dangerzoneCoords
+      .filter(zone => isInZone(location, zone))
+      .map(zone => ({
+        title: zone.title,
+        coordId: `${zone.lat},${zone.lon}`,
+        distance: coordDistance(location, zone)
+      }));
+
+    this.setState({ location });
   },
 
   _showAlert: function() {
@@ -94,49 +132,16 @@ var dangerzone = React.createClass({
   },
 
   render: function() {
-    var longitude;
-    var latitude;
-    var location = {};
-
-    if(this.state.lastPosition.coords) {
-      longitude = this.state.lastPosition.coords.longitude;
-      latitude = this.state.lastPosition.coords.latitude;
-      location = { latitude, longitude };
-    }
-
-    var dangerzoneCoords = [
-      {
-        latitude: -33.8634,
-        longitude: 151.210,
-        title: 'dangerous place',
-        radius: 100
-      },
-      {
-        latitude: -33.8630,
-        longitude: 151.212,
-        title: 'another dangerous place',
-        radius: 100
-      }
-    ];
-
-    var nearbyZones = dangerzoneCoords.map(zone => ({
-      title: zone.title,
-      isInZone: isInZone(location, zone)
-    }));
-
-    var isInDanger = nearbyZones.filter(zone => zone.isInZone).length > 0;
-
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Dangerzone
         </Text>
 
-        <CurrentCoordinates coords={this.state.lastPosition.coords}/>
+        <CurrentCoordinates coords={this.state.location}/>
 
         <Text>
-          {isInDanger ? 'Danger Will Robinson!\n' : ''}
-          {JSON.stringify(nearbyZones, ' ', 2)}
+          {/*JSON.stringify(nearbyZones, ' ', 2)*/}
         </Text>
 
         <View style={styles.row}>
