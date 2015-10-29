@@ -24,16 +24,15 @@ var CurrentCoordinates = React.createClass({
     var longitude;
     var latitude;
 
-    if(this.props.coords) {
+    if (this.props.coords) {
       longitude = this.props.coords.longitude;
       latitude = this.props.coords.latitude;
     }
 
     return (
         <Text>
-          <Text>My coordinates</Text>
-          <Text>longitude: {longitude}</Text>
-          <Text>latitude: {latitude}</Text>
+          Current position:
+          {longitude}, {latitude}
         </Text>
     );
   }
@@ -97,10 +96,12 @@ var dangerzone = React.createClass({
   render: function() {
     var longitude;
     var latitude;
+    var location = {};
 
     if(this.state.lastPosition.coords) {
       longitude = this.state.lastPosition.coords.longitude;
       latitude = this.state.lastPosition.coords.latitude;
+      location = { latitude, longitude };
     }
 
     var dangerzoneCoords = [
@@ -108,39 +109,37 @@ var dangerzone = React.createClass({
         latitude: -33.8634,
         longitude: 151.210,
         title: 'dangerous place',
+        radius: 100
       },
       {
         latitude: -33.8630,
         longitude: 151.212,
         title: 'another dangerous place',
+        radius: 100
       }
     ];
+
+    var nearbyZones = dangerzoneCoords.map(zone => ({
+      title: zone.title,
+      isInZone: isInZone(location, zone)
+    }));
+
+    var isInDanger = nearbyZones.filter(zone => zone.isInZone).length > 0;
 
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Welcome to the Dangerzone
+          Dangerzone
         </Text>
-        <Text style={styles.instructions}>
-          Lets get dangerous
-        </Text>
-        <Text style={styles.instructions}>
-          =)
-        </Text>
-        <Text>
-          <Text style={styles.title}>Initial position: </Text>
-          {JSON.stringify(this.state.initialPosition)}
-        </Text>
-        <Text>
-          <Text style={styles.title}>Distance from dangerzone[0]:</Text>
-          {Math.round(coordDistance({ longitude, latitude }, dangerzoneCoords[0]) * 1e3) + ' (m)'}
-        </Text>
-        <Text>
-          <Text style={styles.title}>Current position: </Text>
-        </Text>
-          <CurrentCoordinates coords={this.state.lastPosition.coords} />
-        <View style={styles.row}>
 
+        <CurrentCoordinates coords={this.state.lastPosition.coords}/>
+
+        <Text>
+          {isInDanger ? 'Danger Will Robinson!\n' : ''}
+          {JSON.stringify(nearbyZones, ' ', 2)}
+        </Text>
+
+        <View style={styles.row}>
           <MapView style={styles.map} showsUserLocation={true} annotations={dangerzoneCoords} />
         </View>
         <Button
