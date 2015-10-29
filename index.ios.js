@@ -341,3 +341,39 @@ var styles = StyleSheet.create({
 });
 
 AppRegistry.registerComponent('dangerzone', () => dangerzone);
+
+/// - Utility ------------------------------------------------------------------
+
+/**
+ * Calculate the distance in km between two coordinates on a sphere.
+ * 
+ * @param {object} a - First coordinate.
+ * @param {number} a.lat - First coordinate latitude.
+ * @param {number} a.lon - First coordinate longitude.
+ * @param {object} b - Second coordinate.
+ * @param {number} b.lat - Second coordinate latitude.
+ * @param {number} b.lon - Second coordinate longitude.
+ */
+function distance(a, b) {
+  var RADIUS_EARTH = 6.371e3; // In kilometers
+
+  function deg2rad(deg) {
+    return deg * Math.PI / 180;
+  }
+
+  var latA = deg2rad(a.lat);
+  var lonA = deg2rad(a.lon);
+  var latB = deg2rad(b.lat);
+  var lonB = deg2rad(b.lon);
+
+  var dlat = Math.abs(latA - latB);
+  var dlon = Math.abs(lonA - lonB);
+
+  var sinSqLat = Math.pow(Math.sin(dlat / 2), 2);
+  var sinSqLon = Math.pow(Math.sin(dlon / 2), 2);
+  var lawCosLat = Math.cos(latA) * Math.cos(latB);
+  var asinArg = Math.sqrt(sinSqLat + lawCosLat * sinSqLon);
+  var centralAngle = 2 * Math.asin(asinArg);
+
+  return RADIUS_EARTH * centralAngle;
+}
