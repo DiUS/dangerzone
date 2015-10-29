@@ -170,6 +170,8 @@ var dangerzone = React.createClass({
   },
 
   render: function() {
+    var dangerStyle;
+    dangerStyle = this.state.isInDanger ? styles.danger : styles.safe;
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
@@ -178,9 +180,12 @@ var dangerzone = React.createClass({
 
         <CurrentCoordinates coords={this.state.location}/>
 
-        <View style={styles.row}>
-          <MapView style={styles.map} showsUserLocation={true} annotations={dangerzoneCoords} />
+        <View style = {dangerStyle}>
+          <View style={styles.row}>
+            <MapView style={styles.map} showsUserLocation={true} annotations={dangerzoneCoords} />
+          </View>
         </View>
+        
       </View>
     );
   },
@@ -275,6 +280,12 @@ var styles = StyleSheet.create({
   buttonLabel: {
     color: 'blue',
   },
+  danger: {
+    backgroundColor: 'red'
+  },
+  safe: {
+    backgroundColor: 'blue'
+  }
 });
 
 AppRegistry.registerComponent('dangerzone', () => dangerzone);
